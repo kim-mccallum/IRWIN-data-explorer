@@ -48,24 +48,18 @@ require([
           }
       };
     
-    // create renderer 
-    // var irwinRenderer = {
-    //         type: "simple",  // autocasts as new SimpleRenderer()
-    //         symbol: { type: "simple-marker" },  // autocasts as new SimpleFillSymbol()
-    //         visualVariables: [{
-    //           type: "color",
-    //           field: "CalculatedAcres",
-    //           // features with 30 ppl/sq km or below are assigned the first color
-    //           stops: [{ value: 0, color: "#f70905" },
-    //                 { value: 100000, color: "#0cf2ee" }]
-    //         }]
-    //       };
+    // create popup
+    var irwinPopup = {
+        title: "Fire Name: {IncidentName}",
+        content: "Cause: {FireCause}<br> Start date: {FireDiscoveryDateTime} <br> Acres: {CalculatedAcres}"
+      };
     // add features
     var firesLayer = new FeatureLayer({
         url:
           "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/IRWIN_Incidents_2020/FeatureServer",
         //   renderer: irwinRenderer,
-        labelingInfo: [irwinLabels]
+        labelingInfo: [irwinLabels],
+        popupTemplate: irwinPopup
       });
       
       map.add(firesLayer);
