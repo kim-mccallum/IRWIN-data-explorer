@@ -12,8 +12,8 @@ require([
     var view = new MapView({
       container: "viewDiv",
       map: map,
-      center: [-118.805, 34.027], // longitude, latitude
-      zoom: 13
+      center: [-122.188, 44.821], // longitude, latitude
+      zoom: 10
     });
 
     var basemapGallery = new BasemapGallery({
@@ -47,11 +47,24 @@ require([
             expression: "$feature.IncidentName"
           }
       };
+    
+    // create renderer 
+    // var irwinRenderer = {
+    //         type: "simple",  // autocasts as new SimpleRenderer()
+    //         symbol: { type: "simple-marker" },  // autocasts as new SimpleFillSymbol()
+    //         visualVariables: [{
+    //           type: "color",
+    //           field: "CalculatedAcres",
+    //           // features with 30 ppl/sq km or below are assigned the first color
+    //           stops: [{ value: 0, color: "#f70905" },
+    //                 { value: 100000, color: "#0cf2ee" }]
+    //         }]
+    //       };
     // add features
     var firesLayer = new FeatureLayer({
         url:
           "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/IRWIN_Incidents_2020/FeatureServer",
-        //   renderer: trailheadsRenderer,
+        //   renderer: irwinRenderer,
         labelingInfo: [irwinLabels]
       });
       
