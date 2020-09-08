@@ -28,6 +28,31 @@ require([
 
     view.ui.add(basemapGallery, "top-right");
 
+    var sqlExpressions = [
+        "IsValid = 1",
+        "CalculatedAcres > 500",
+        "FireCause = 'Human'",
+        "FireCause = 'Natural'",
+        "FireCause = 'Unknown'",
+        //recent starts
+      ];
+      
+      var selectFilter = document.createElement("select");
+      selectFilter.setAttribute("class", "esri-widget esri-select");
+      selectFilter.setAttribute(
+        "style",
+        "width: 275px; font-family: Avenir Next W00; font-size: 1em;"
+      );
+      
+      sqlExpressions.forEach(function (sql) {
+        var option = document.createElement("option");
+        option.value = sql;
+        option.innerHTML = sql;
+        selectFilter.appendChild(option);
+      });
+      
+      view.ui.add(selectFilter, "top-right");
+
     //create labels
     var irwinLabels = {
         symbol: {
@@ -62,5 +87,13 @@ require([
         popupTemplate: irwinPopup
       });
       
+      function setFeatureLayerFilter(expression) {
+        firesLayer.definitionExpression = expression;
+      }
+
+      selectFilter.addEventListener('change', function (event) {
+        setFeatureLayerFilter(event.target.value);
+      });
+
       map.add(firesLayer);
   });
