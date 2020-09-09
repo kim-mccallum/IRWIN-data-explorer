@@ -28,12 +28,14 @@ require([
 
     view.ui.add(basemapGallery, "top-right");
 
+    // make this an array of arrays
+    // make this an array of arrays
     var sqlExpressions = [
-        "IsValid = 1",
-        "CalculatedAcres > 500",
-        "FireCause = 'Human'",
-        "FireCause = 'Natural'",
-        "FireCause = 'Unknown'",
+        ["All fires", "IsValid = 1"],
+        ["Greater than 500 acres", "CalculatedAcres > 500"],
+        ["Human caused", "FireCause = 'Human'"],
+        ["Natural", "FireCause = 'Natural'"],
+        ["Unknown cause", "FireCause = 'Unknown'"],
         //recent starts
       ];
       
@@ -46,11 +48,18 @@ require([
       
       sqlExpressions.forEach(function (sql) {
         var option = document.createElement("option");
-        option.value = sql;
-        option.innerHTML = sql;
+        option.value = sql[1];
+        option.innerHTML = sql[0];
         selectFilter.appendChild(option);
       });
-      
+
+      var coordsWidget = document.createElement("div");
+      coordsWidget.id = "coordsWidget";
+      coordsWidget.className = "esri-widget esri-component";
+      coordsWidget.style.padding = "7px 15px 5px";
+
+      view.ui.add(coordsWidget, "bottom-right");
+          
       view.ui.add(selectFilter, "top-right");
 
     //create labels
@@ -86,13 +95,28 @@ require([
         labelingInfo: [irwinLabels],
         popupTemplate: irwinPopup
       });
-      
-      function setFeatureLayerFilter(expression) {
-        firesLayer.definitionExpression = expression;
+
+      // // server-side 
+    //   function setFeatureLayerFilter(expression) {
+    //     firesLayer.definitionExpression = expression;
+    //   }
+
+    //   selectFilter.addEventListener('change', function (event) {
+    //     setFeatureLayerFilter(event.target.value);
+    //   });
+
+      // client-side queries
+      function setFeatureLayerViewFilter(expression) {
+        view.whenLayerView(firesLayer).then(function (featureLayerView) {
+          featureLayerView.filter = {
+            where: expression
+          };
+        });
       }
 
-      selectFilter.addEventListener('change', function (event) {
-        setFeatureLayerFilter(event.target.value);
+      selectFilter.addEventListener("change", function (event) {
+        // setFeatureLayerFilter(event.target.value);
+        setFeatureLayerViewFilter(event.target.value);
       });
 
       map.add(firesLayer);
