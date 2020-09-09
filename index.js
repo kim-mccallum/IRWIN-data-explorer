@@ -1,9 +1,9 @@
 require([
     "esri/Map",
     "esri/views/MapView",
-    "esri/widgets/BasemapGallery",
+    "esri/widgets/BasemapToggle",
     "esri/layers/FeatureLayer"
-  ], function(Map, MapView, BasemapGallery, FeatureLayer) {
+  ], function(Map, MapView, BasemapToggle, FeatureLayer) {
       //set up map and view
     var map = new Map({
       basemap: "topo-vector"
@@ -16,17 +16,12 @@ require([
       zoom: 10
     });
 
-    var basemapGallery = new BasemapGallery({
-        view: view,
-        source: {
-          portal: {
-            url: "https://www.arcgis.com",
-            useVectorBasemaps: true // Load vector tile basemaps
-          }
-        }
-      });
+    var basemapToggle = new BasemapToggle({
+      view: view,
+      nextBasemap: "satellite"
+    });
 
-    view.ui.add(basemapGallery, "top-right");
+    view.ui.add(basemapToggle, "bottom-right");
 
     // make this an array of arrays
     // make this an array of arrays
