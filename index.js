@@ -119,5 +119,26 @@ require([
         setFeatureLayerViewFilter(event.target.value);
       });
 
+      function showCoordinates(pt) {
+        var coords =
+          "Lat/Lon " +
+          pt.latitude.toFixed(3) +
+          " " +
+          pt.longitude.toFixed(3) +
+          " | Scale 1:" +
+          Math.round(view.scale * 1) / 1 +
+          " | Zoom " +
+          view.zoom;
+        coordsWidget.innerHTML = coords;
+      }
+
+      view.watch("stationary", function (isStationary) {
+        showCoordinates(view.center);
+      });
+      
+      view.on("pointer-move", function (evt) {
+        showCoordinates(view.toMap({ x: evt.x, y: evt.y }));
+      });
+
       map.add(firesLayer);
   });
