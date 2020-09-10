@@ -158,7 +158,7 @@ require([
 
       view.ui.add(coordsWidget, "bottom-right");
           
-      view.ui.add(selectFilter, "top-right");
+      view.ui.add(selectFilter, "top-left");
 
       selectFilter.addEventListener("change", function (event) {
         setFeatureLayerViewFilter(event.target.value);
@@ -175,5 +175,33 @@ require([
       map.add(firesLayer);
 
       // try to make legend next
+      const legend = new Legend({
+        view: view,
+        container: "legendDiv"
+      });
 
+      const infoDiv = document.getElementById("infoDiv");
+      view.ui.add(
+        new Expand({
+          view: view,
+          content: infoDiv,
+          expandIconClass: "esri-icon-layer-list",
+          expanded: false
+        }),
+        "top-left"
+      );
+
+      const toggleButton = document.getElementById("cluster");
+
+      // To turn off clustering on a firesLayer, set the
+      // featureReduction property to null
+      toggleButton.addEventListener("click", function () {
+        let fr = firesLayer.featureReduction;
+        firesLayer.featureReduction =
+          fr && fr.type === "cluster" ? null : clusterConfig;
+        toggleButton.innerText =
+          toggleButton.innerText === "Enable Clustering"
+            ? "Disable Clustering"
+            : "Enable Clustering";
+      });
   });
