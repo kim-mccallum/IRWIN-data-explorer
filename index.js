@@ -2,8 +2,13 @@ require([
     "esri/Map",
     "esri/views/MapView",
     "esri/widgets/BasemapToggle",
-    "esri/layers/FeatureLayer"
-  ], function(Map, MapView, BasemapToggle, FeatureLayer) {
+    "esri/layers/FeatureLayer",
+    "esri/widgets/Legend",
+    "esri/widgets/Expand",
+    "esri/widgets/Home"
+  ], function(Map, MapView, BasemapToggle, FeatureLayer, Legend,
+    Expand,
+    Home) {
 
     //a few functions: 
     function showCoordinates(pt) {
@@ -76,11 +81,54 @@ require([
         nextBasemap: "satellite"
       });
 
+      // Configures clustering on the layer. A cluster radius
+      // of 100px indicates an area comprising screen space 100px
+      // in length from the center of the cluster
+      const clusterConfig = {
+        type: "cluster",
+        clusterRadius: "100px",
+        // {cluster_count} is an aggregate field containing
+        // the number of features comprised by the cluster
+        popupTemplate: {
+          content: "This cluster represents {cluster_count} fires.",
+          fieldInfos: [
+            {
+              fieldName: "cluster_count",
+              format: {
+                places: 0,
+                digitSeparator: true
+              }
+            }
+          ]
+        },
+        clusterMinSize: "24px",
+        clusterMaxSize: "60px",
+        labelingInfo: [
+          {
+            deconflictionStrategy: "none",
+            labelExpressionInfo: {
+              expression: "Text($feature.cluster_count, '#,###')"
+            },
+            symbol: {
+              type: "text",
+              color: "#004a5d",
+              font: {
+                weight: "bold",
+                family: "Noto Sans",
+                size: "12px"
+              }
+            },
+            labelPlacement: "center-center"
+          }
+        ]
+      };
+
     // add features
     var firesLayer = new FeatureLayer({
         url:
           "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/IRWIN_Incidents_2020/FeatureServer",
         //   renderer: irwinRenderer,
+        featureReduction: clusterConfig,
         labelingInfo: [{
           symbol: {
             type: "text",
@@ -125,4 +173,7 @@ require([
       });
 
       map.add(firesLayer);
+
+      // try to make legend next
+
   });
