@@ -4,7 +4,31 @@ require([
     "esri/widgets/BasemapToggle",
     "esri/layers/FeatureLayer"
   ], function(Map, MapView, BasemapToggle, FeatureLayer) {
-      //set up map and view
+
+    //a few functions: 
+    function showCoordinates(pt) {
+      var coords =
+        "Lat/Lon " +
+        pt.latitude.toFixed(3) +
+        " " +
+        pt.longitude.toFixed(3) +
+        " | Scale 1:" +
+        Math.round(view.scale * 1) / 1 +
+        " | Zoom " +
+        view.zoom;
+      coordsWidget.innerHTML = coords;
+    }
+
+    // client-side queries
+    function setFeatureLayerViewFilter(expression) {
+      view.whenLayerView(firesLayer).then(function (featureLayerView) {
+        featureLayerView.filter = {
+          where: expression
+        };
+      });
+    }
+
+    //set up map and view
     var map = new Map({
       basemap: "topo-vector"
     });
@@ -16,15 +40,8 @@ require([
       zoom: 10
     });
 
-    var basemapToggle = new BasemapToggle({
-      view: view,
-      nextBasemap: "satellite"
-    });
-
-    view.ui.add(basemapToggle, "bottom-right");
-
-    // make this an array of arrays
-    // make this an array of arrays
+    // add some map elements
+    // set up queries for fire layer
     var sqlExpressions = [
         ["All fires", "IsValid = 1"],
         ["Greater than 500 acres", "CalculatedAcres > 500"],
@@ -53,79 +70,51 @@ require([
       coordsWidget.className = "esri-widget esri-component";
       coordsWidget.style.padding = "7px 15px 5px";
 
-      view.ui.add(coordsWidget, "bottom-right");
-          
-      view.ui.add(selectFilter, "top-right");
+        
+      var basemapToggle = new BasemapToggle({
+        view: view,
+        nextBasemap: "satellite"
+      });
 
-    //create labels
-    var irwinLabels = {
-        symbol: {
-          type: "text",
-          color: "#FFFFFF",
-          haloColor: "#5E8D74",
-          haloSize: "2px",
-          font: {
-            size: "12px",
-            family: "Noto Sans",
-            style: "italic",
-            weight: "normal"
-          }
-        },
-        labelPlacement: "above-center",
-        labelExpressionInfo: {
-            expression: "$feature.IncidentName"
-          }
-      };
-    
-    // create popup
-    var irwinPopup = {
-        title: "Fire Name: {IncidentName}",
-        content: "Cause: {FireCause}<br> Start date: {FireDiscoveryDateTime} <br> Acres: {CalculatedAcres}"
-      };
     // add features
     var firesLayer = new FeatureLayer({
         url:
           "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/IRWIN_Incidents_2020/FeatureServer",
         //   renderer: irwinRenderer,
-        labelingInfo: [irwinLabels],
-        popupTemplate: irwinPopup
+        labelingInfo: [{
+          symbol: {
+            type: "text",
+            color: "#FFFFFF",
+            haloColor: "#5E8D74",
+            haloSize: "2px",
+            font: {
+              size: "12px",
+              family: "Noto Sans",
+              style: "italic",
+              weight: "normal"
+            }
+          },
+          labelPlacement: "above-center",
+          labelExpressionInfo: {
+              expression: "$feature.IncidentName"
+            }
+        }],
+        popupTemplate: {
+          title: "Fire Name: {IncidentName}",
+          content: "Cause: {FireCause}<br> Start date: {FireDiscoveryDateTime} <br> Acres: {CalculatedAcres}"
+        }
       });
 
-      // // server-side 
-    //   function setFeatureLayerFilter(expression) {
-    //     firesLayer.definitionExpression = expression;
-    //   }
+      //Configure the view
+      view.ui.add(basemapToggle, "bottom-right");
 
-    //   selectFilter.addEventListener('change', function (event) {
-    //     setFeatureLayerFilter(event.target.value);
-    //   });
-
-      // client-side queries
-      function setFeatureLayerViewFilter(expression) {
-        view.whenLayerView(firesLayer).then(function (featureLayerView) {
-          featureLayerView.filter = {
-            where: expression
-          };
-        });
-      }
+      view.ui.add(coordsWidget, "bottom-right");
+          
+      view.ui.add(selectFilter, "top-right");
 
       selectFilter.addEventListener("change", function (event) {
-        // setFeatureLayerFilter(event.target.value);
         setFeatureLayerViewFilter(event.target.value);
       });
-
-      function showCoordinates(pt) {
-        var coords =
-          "Lat/Lon " +
-          pt.latitude.toFixed(3) +
-          " " +
-          pt.longitude.toFixed(3) +
-          " | Scale 1:" +
-          Math.round(view.scale * 1) / 1 +
-          " | Zoom " +
-          view.zoom;
-        coordsWidget.innerHTML = coords;
-      }
 
       view.watch("stationary", function (isStationary) {
         showCoordinates(view.center);
