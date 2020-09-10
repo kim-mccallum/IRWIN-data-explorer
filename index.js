@@ -5,7 +5,8 @@ require([
     "esri/layers/FeatureLayer",
     "esri/widgets/Legend",
     "esri/widgets/Expand",
-  ], function(Map, MapView, BasemapToggle, FeatureLayer, Legend, Expand) {
+    "esri/widgets/Search"
+  ], function(Map, MapView, BasemapToggle, FeatureLayer, Legend, Expand, Search) {
 
     //a few functions: 
     function showCoordinates(pt) {
@@ -145,7 +146,8 @@ require([
         popupTemplate: {
           title: "Fire Name: {IncidentName}",
           content: "Cause: {FireCause}<br> Start date: {FireDiscoveryDateTime} <br> Acres: {CalculatedAcres}"
-        }
+        },
+        copyright: "NIFC IRWIN"
       });
 
       //Configure the view
@@ -199,4 +201,24 @@ require([
             ? "Disable Clustering"
             : "Enable Clustering";
       });
+
+      //add search widget
+      var searchWidget = new Search({
+        view: view,
+        allPlaceholder: "Search Incidents",
+        sources: [
+          {
+            layer: firesLayer,
+            searchFields: ["IncidentName"],
+            displayField: "IncidentName",
+            exactMatch: false,
+          }
+        ]
+      });
+
+      // Add the search widget to the top left corner of the view
+      view.ui.add(searchWidget, {
+        position: "top-right"
+      });
+
   });
