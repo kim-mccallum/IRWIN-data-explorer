@@ -49,10 +49,10 @@ require([
     // set up queries for fire layer
     var sqlExpressions = [
         ["All fires", "IsValid = 1"],
-        ["Greater than 500 acres", "CalculatedAcres > 500"],
-        ["Human caused", "FireCause = 'Human'"],
-        ["Natural", "FireCause = 'Natural'"],
-        ["Unknown cause", "FireCause = 'Unknown'"],
+        ["Current fires", "IsValid = 1 AND ContainmentDateTime IS NULL"],
+        ["Current fires - Human caused", "FireCause = 'Human' AND ContainmentDateTime IS NULL"],
+        ["Current fires - Natural", "FireCause = 'Natural' AND ContainmentDateTime IS NULL"],
+        ["Current fires - Unknown cause", "FireCause = 'Unknown' AND ContainmentDateTime IS NULL"],
         //recent starts
       ];
       
@@ -111,11 +111,13 @@ require([
             },
             symbol: {
               type: "text",
-              color: "#004a5d",
+              color: "#0E0004",
+              haloColor: "#FFFFFF",
+              haloSize: "1px",
               font: {
                 weight: "bold",
                 family: "Noto Sans",
-                size: "12px"
+                size: "16px"
               }
             },
             labelPlacement: "center-center"
@@ -132,8 +134,8 @@ require([
         labelingInfo: [{
           symbol: {
             type: "text",
-            color: "#FFFFFF",
-            haloColor: "#5E8D74",
+            color: "#0E0004",
+            haloColor: "#FFFFFF",
             haloSize: "2px",
             font: {
               size: "12px",
