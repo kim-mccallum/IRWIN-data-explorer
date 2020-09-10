@@ -23,4 +23,5 @@ body,
 .esri-select{
   background-color: #FDFFFC;
   border-radius: 5px;
+  width: 275px; 
 }

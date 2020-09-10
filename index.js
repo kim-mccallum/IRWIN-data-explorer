@@ -5,10 +5,7 @@ require([
     "esri/layers/FeatureLayer",
     "esri/widgets/Legend",
     "esri/widgets/Expand",
-    "esri/widgets/Home"
-  ], function(Map, MapView, BasemapToggle, FeatureLayer, Legend,
-    Expand,
-    Home) {
+  ], function(Map, MapView, BasemapToggle, FeatureLayer, Legend, Expand) {
 
     //a few functions: 
     function showCoordinates(pt) {
@@ -58,10 +55,6 @@ require([
       
       var selectFilter = document.createElement("select");
       selectFilter.setAttribute("class", "esri-widget esri-select");
-      selectFilter.setAttribute(
-        "style",
-        "width: 275px; font-family: Avenir Next W00; font-size: 1em;"
-      );
       
       sqlExpressions.forEach(function (sql) {
         var option = document.createElement("option");
